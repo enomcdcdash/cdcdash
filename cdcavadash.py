@@ -12,7 +12,7 @@ st.title('📊 CDC Site Availability Dashboard')
 file_path = "data/CDC_Availability_2025_194 sites.xlsx"
 
 try:
-    df = pd.read_excel(file_path, sheet_name="Ava CDC")
+    df = pd.read_excel(file_path, sheet_name="Ava CDC", engine="openpyxl")
     st.success("Data loaded successfully from local file!")
 except Exception as e:
     st.error(f"Failed to load data: {e}")
