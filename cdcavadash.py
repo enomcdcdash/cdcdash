@@ -9,7 +9,7 @@ import io
 st.set_page_config(page_title="CDC Site Availability Tracker", layout="wide")
 st.title('📊 CDC Site Availability Dashboard')
 
-file_path = "data/CDC_Availability_2025_194 sites.xlsx"
+file_path = "data/CDC_Availability_2025_194sites.xlsx"
 
 try:
     df = pd.read_excel(file_path, sheet_name="Ava CDC", engine="openpyxl")
