@@ -16,7 +16,7 @@ st.title('📊 CDC Site Availability Dashboard')
 
 # === File Paths ===
 file_path1 = "data/CDC_Availability_2025_194.xlsx"
-file_path2 = "data/ESTIMASIPO2025"
+file_path2 = "data/ESTIMASIPO2025.xlsx"
 
 # === Load First File ===
 try:
