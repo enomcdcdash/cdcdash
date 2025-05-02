@@ -141,19 +141,14 @@ with tab1:
             #default_index = random.randint(1, len(site_choices) - 1)  # Skip index 0 ("All")
             site_choices = ["All"] + available_sites
             # Create a random Site ID only once per session
-            if "selected_site_index" not in st.session_state:
-                # Exclude "All" from random selection (index 0)
-                if len(available_sites) > 0:
-                    st.session_state.selected_site_index = random.randint(1, len(site_choices) - 1)  # skip index 0 ("All")
-                else:
-                    st.session_state.selected_site_index = 0  # fallback to "All"           
+            if "default_site_index" not in st.session_state:
+                st.session_state.default_site_index = random.randint(1, len(site_choices) - 1) if len(site_choices) > 1 else 0           
             
             with col4:
                 selected_site = st.selectbox(
                     "Select Site ID",
                     options=site_choices,
-                    index=st.session_state.selected_site_index,
-                    key="selected_site_box"  # ensure Streamlit tracks changes
+                    index=st.session_state.default_site_index
                 )
 
                 #selected_site = st.selectbox("Select Site ID", options=["All"] + available_sites)
