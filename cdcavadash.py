@@ -233,7 +233,7 @@ with tab1:
 
                 fig1.update_layout(
                     title=dict(
-                        text=f"Availability ({selected_site}) - ({selected_site_name})",
+                        text=f"Availability Site {selected_site} - {selected_site_name}",
                         x=0.5,  # center the title
                         xanchor='center',
                         font=dict(size=18)
@@ -288,6 +288,12 @@ with tab1:
                     ))
 
                 fig2.update_layout(
+                    title=dict(
+                        text=f"{selected_site} - {selected_site_name}",
+                        x=0.5,  # center the title
+                        xanchor='center',
+                        font=dict(size=18)
+                    ),
                     #xaxis_title="Month - Year",
                     yaxis_title="IDR",
                     hovermode='x unified',
