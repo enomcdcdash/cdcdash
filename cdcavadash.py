@@ -15,8 +15,8 @@ st.set_page_config(page_title="CDC Site Availability Tracker", layout="wide")
 st.title('📊 CDC Site Availability Dashboard')
 
 # === File Paths ===
-file_path1 = "C:\\Ariya Data\\python\\dashboard\\data\\CDC_Availability_2025_194 sites.xlsx"
-file_path2 = "C:\\Ariya Data\\python\\dashboard\\data\\ESTIMASI PO 2025.xlsx"
+file_path1 = "/data/CDC_Availability_2025_194.xlsx"
+file_path2 = "/data/ESTIMASIPO2025"
 
 # === Load First File ===
 try:
