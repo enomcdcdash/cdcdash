@@ -169,7 +169,13 @@ with tab1:
                 filtered_df = filtered_df[filtered_df["Site Id"] == selected_site]
             if search_site:
                 filtered_df = filtered_df[filtered_df["Site Id"].str.contains(search_site)]
-
+            # --- Get selected site name ---
+            if selected_site != "All":
+                site_name_match = filtered_df[filtered_df["Site Id"] == selected_site]["Site Name"]
+                selected_site_name = site_name_match.iloc[0] if not site_name_match.empty else ""
+            else:
+                selected_site_name = ""
+                
         # --- Charts Section ---
         if not filtered_df.empty:
             # Translate Indonesian month names to English
@@ -226,6 +232,12 @@ with tab1:
                     ))
 
                 fig1.update_layout(
+                    title=dict(
+                        text=f"Availability ({selected_site}) - ({selected_site_name})",
+                        x=0.5,  # center the title
+                        xanchor='center',
+                        font=dict(size=18)
+                    ),
                     #xaxis_title="Month - Year",
                     yaxis_title="Availability",
                     hovermode='x unified',
