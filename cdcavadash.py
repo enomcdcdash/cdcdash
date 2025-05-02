@@ -11,8 +11,8 @@ import streamlit.components.v1 as components
 
 
 # --- Page Config ---
-st.set_page_config(page_title="CDC Dashboard", layout="wide")
-st.title('📊 CDC Dashboard')
+st.set_page_config(page_title="CDC Site Availability Tracker", layout="wide")
+st.title('📊 CDC Site Availability Dashboard')
 
 # === File Paths ===
 file_path1 = "data/CDC_Availability_2025_194.xlsx"
@@ -137,13 +137,28 @@ with tab1:
 
             available_sites = sorted(site_filter_df["Site Id"].dropna().unique().tolist())
 
+            #site_choices = ["All"] + available_sites
+            #default_index = random.randint(1, len(site_choices) - 1)  # Skip index 0 ("All")
             site_choices = ["All"] + available_sites
-            default_index = random.randint(1, len(site_choices) - 1)  # Skip index 0 ("All")
-
+            # Create a random Site ID only once per session
+            if "selected_site_index" not in st.session_state:
+                # Exclude "All" from random selection (index 0)
+                if len(available_sites) > 0:
+                    st.session_state.selected_site_index = random.randint(1, len(site_choices) - 1)  # skip index 0 ("All")
+                else:
+                    st.session_state.selected_site_index = 0  # fallback to "All"           
+            
             with col4:
+                selected_site = st.selectbox(
+                    "Select Site ID",
+                    options=site_choices,
+                    index=st.session_state.selected_site_index,
+                    key="selected_site_box"  # ensure Streamlit tracks changes
+                )
+
                 #selected_site = st.selectbox("Select Site ID", options=["All"] + available_sites)
-                selected_site = st.selectbox("Select Site ID", options=site_choices, index=default_index)
-                
+                #selected_site = st.selectbox("Select Site ID", options=site_choices, index=default_index)
+
             with col5:
                 search_site = st.text_input("🔍 Search Site ID")
 
@@ -284,7 +299,44 @@ with tab1:
         if filtered_df.empty:
             st.info("No data matches the selected filters.")
         else:
+            desired_columns = [
+                'No',
+                'Month_Year',
+                'Regional TI',
+                'Site Id',
+                'Site Name',
+                'Daya PO',
+                'Periode Tagihan (Awal)',
+                'Periode Tagihan (Akhir)',
+                'Jumlah Periode (Bulan)',
+                'Nominal PO',
+                'Index BBM',
+                'Class Site',
+                'Target Availability (%)',
+                'Avaibility',
+                'Persentase Penalty',
+                'Nilai Penalty',
+                'Nilai BAST',
+                'Nilai BAST dikurangi Penalty',
+                'Ava Achievement'
+            ]
+            # Filter and reorder DataFrame
+            filtered_df = filtered_df[desired_columns]
             st.dataframe(style_cdc(filtered_df))
+
+            # Create a BytesIO buffer and write the DataFrame to Excel
+            output = io.BytesIO()
+            with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
+                filtered_df.to_excel(writer, index=False, sheet_name='Filtered Data')
+            output.seek(0)
+
+            # Add download button
+            st.download_button(
+                label="📥 Download Filtered Data as Excel",
+                data=output,
+                file_name="filtered_data.xlsx",
+                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            )
 
             # --- Achievement Summary ---
             if 'Ava Achievement' in filtered_df.columns:
