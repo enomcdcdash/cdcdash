@@ -11,8 +11,8 @@ import streamlit.components.v1 as components
 
 
 # --- Page Config ---
-st.set_page_config(page_title="CDC Site Availability Tracker", layout="wide")
-st.title('📊 CDC Site Availability Dashboard')
+st.set_page_config(page_title="CDC Dashboard", layout="wide")
+st.title('📊 CDC Dashboard')
 
 # === File Paths ===
 file_path1 = "data/CDC_Availability_2025_194.xlsx"
