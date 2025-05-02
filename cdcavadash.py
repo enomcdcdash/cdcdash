@@ -4,21 +4,29 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import plotly.graph_objects as go
 import io
+import os
+import re
+import random
+import streamlit.components.v1 as components
+
 
 # --- Page Config ---
 st.set_page_config(page_title="CDC Site Availability Tracker", layout="wide")
 st.title('📊 CDC Site Availability Dashboard')
 
-file_path = "data/CDC_Availability_2025_194.xlsx"
+# === File Paths ===
+file_path1 = "C:\\Ariya Data\\python\\dashboard\\data\\CDC_Availability_2025_194 sites.xlsx"
+file_path2 = "C:\\Ariya Data\\python\\dashboard\\data\\ESTIMASI PO 2025.xlsx"
 
+# === Load First File ===
 try:
-    df = pd.read_excel(file_path, sheet_name="Ava CDC", engine="openpyxl")
-    st.success("Data loaded successfully from local file!")
+    df = pd.read_excel(file_path1, sheet_name="Ava CDC")
+    #st.success("CDC Availability data loaded successfully from local file!")
 except Exception as e:
-    st.error(f"Failed to load data: {e}")
-    st.stop()  # Stop the app if loading fails
+    st.error(f"Failed to load CDC Availability data: {e}")
+    st.stop()
 
-# --- Data Preparation ---
+# --- Data Preparation for Availability File ---
 melted_df = pd.melt(df, 
                     id_vars=['Area', 'Site ID', 'Regional', 'Site Name', 'NS', 'Cluster', 'On Service / Cut OFF', 'Site Class', 'Target AVA'],
                     var_name='Date', 
@@ -27,10 +35,271 @@ melted_df = pd.melt(df,
 melted_df['Date'] = pd.to_datetime(melted_df['Date'], format='%d-%b-%y', errors='coerce')
 melted_df = melted_df.dropna(subset=['Date'])
 
-# --- Tabs ---
-tab1, tab2 = st.tabs(["📈 Daily Tracker", "📊 Summary View"])
+# === Load and Combine Second File (ESTIMASI PO) ===
+# --- Extract year from filename ---
+filename = os.path.basename(file_path2)
+match = re.search(r"\d{4}", filename)
+cdc_year = match.group(0) if match else "Unknown"
+
+expected_sheets = ["JANUARI", "FEBRUARI", "MARET", "APRIL", "MEI", "JUNI", 
+                   "JULI", "AGUSTUS", "SEPTEMBER", "OKTOBER", "NOVEMBER", "DESEMBER"]
+
+cdc_df_list = []
+
+try:
+    xls = pd.ExcelFile(file_path2)
+    available_sheets = xls.sheet_names
+
+    cdc_df_list = []
+    for month in ["JANUARI", "FEBRUARI", "MARET", "APRIL", "MEI", "JUNI",
+                  "JULI", "AGUSTUS", "SEPTEMBER", "OKTOBER", "NOVEMBER", "DESEMBER"]:
+        if month in available_sheets:
+            df_month = pd.read_excel(xls, sheet_name=month, header=1)  # Header in second row
+            df_month['Month'] = month
+            df_month['Year'] = cdc_year  # <- ✅ Add Year column here
+            cdc_df_list.append(df_month)
+
+    cdc_df = pd.concat(cdc_df_list, ignore_index=True)
+
+    # Add "Ava Achievement" column
+    cdc_df['Ava Achievement'] = cdc_df.apply(
+        lambda row: 'Achieved' if row['Avaibility'] >= row['Target Availability (%)'] else 'Not Achieved', axis=1
+    )
+
+except Exception as e:
+    st.error(f"Failed to read CDC Monthly file: {e}")
+    cdc_df = pd.DataFrame()
+
+# --- Add Ava Achievement Column ---
+if not cdc_df.empty:
+    if 'Avaibility' in cdc_df.columns and 'Target Availability (%)' in cdc_df.columns:
+        cdc_df['Ava Achievement'] = cdc_df.apply(
+            lambda row: 'Achieved' if row['Avaibility'] >= row['Target Availability (%)'] else 'Not Achieved',
+            axis=1
+        )
+    else:
+        st.warning("Columns 'Avaibility' or 'Target Availability (%)' not found in PO data.")
+else:
+    st.info("cdc_df is empty. Skipping Ava Achievement calculation.")
+
+tab1, tab2, tab3 = st.tabs(["📅 CDC Monthly Summary", "📈 Availability Daily Tracker", "📊 Availability Summary (INAP)"])
 
 with tab1:
+    st.subheader("📅 CDC Monthly Summary")
+
+    if cdc_df.empty:
+        st.warning("No CDC Monthly data available.")
+    else:
+        import plotly.graph_objects as go
+        import pandas as pd
+
+        # --- Format currency and percentages for display ---
+        def style_cdc(df):
+            return df.style.format({
+                'Target Availability (%)': '{:.2%}',
+                'Avaibility': '{:.2%}',
+                'Persentase Penalty': '{:.2%}',
+                'Nominal PO': 'Rp {:,.0f}',
+                'Nilai Penalty': 'Rp {:,.0f}',
+                'Nilai BAST': 'Rp {:,.0f}',
+                'Nilai BAST dikurangi Penalty': 'Rp {:,.0f}'
+            })
+
+        if cdc_df.empty:
+            st.warning("No CDC Monthly data available.")
+        else:
+            # --- Normalize Site Id as string ---
+            cdc_df['Site Id'] = cdc_df['Site Id'].astype(str).str.strip()
+
+            # --- Filter Layout: 5 columns ---
+            col1, col2, col3, col4, col5 = st.columns(5)
+
+            with col1:
+                selected_month = st.selectbox("Select Month", 
+                                          options=["All"] + sorted(cdc_df["Month"].dropna().unique().tolist()))
+
+            with col2:
+                selected_year = st.selectbox("Select Year", 
+                                         options=["All"] + sorted(cdc_df["Year"].dropna().unique()))
+
+            with col3:
+                selected_regional = st.selectbox("Select Regional", 
+                                             options=["All"] + sorted(cdc_df["Regional TI"].dropna().unique()))
+
+            # --- Dynamically update Site ID based on selected filters ---
+            site_filter_df = cdc_df.copy()
+            if selected_month != "All":
+                site_filter_df = site_filter_df[site_filter_df["Month"] == selected_month]
+            if selected_year != "All":
+                site_filter_df = site_filter_df[site_filter_df["Year"] == selected_year]
+            if selected_regional != "All":
+                site_filter_df = site_filter_df[site_filter_df["Regional TI"] == selected_regional]
+
+            available_sites = sorted(site_filter_df["Site Id"].dropna().unique().tolist())
+
+            site_choices = ["All"] + available_sites
+            default_index = random.randint(1, len(site_choices) - 1)  # Skip index 0 ("All")
+
+            with col4:
+                #selected_site = st.selectbox("Select Site ID", options=["All"] + available_sites)
+                selected_site = st.selectbox("Select Site ID", options=site_choices, index=default_index)
+                
+            with col5:
+                search_site = st.text_input("🔍 Search Site ID")
+
+            # --- Apply Filters ---
+            filtered_df = cdc_df.copy()
+            if selected_month != "All":
+                filtered_df = filtered_df[filtered_df["Month"] == selected_month]
+            if selected_year != "All":
+                filtered_df = filtered_df[filtered_df["Year"] == selected_year]
+            if selected_regional != "All":
+                filtered_df = filtered_df[filtered_df["Regional TI"] == selected_regional]
+            if selected_site != "All":
+                filtered_df = filtered_df[filtered_df["Site Id"] == selected_site]
+            if search_site:
+                filtered_df = filtered_df[filtered_df["Site Id"].str.contains(search_site)]
+
+        # --- Charts Section ---
+        if not filtered_df.empty:
+            # Translate Indonesian month names to English
+            month_translation = {
+                'JANUARI': 'January',
+                'FEBRUARI': 'February',
+                'MARET': 'March',
+                'APRIL': 'April',
+                'MEI': 'May',
+                'JUNI': 'June',
+                'JULI': 'July',
+                'AGUSTUS': 'August',
+                'SEPTEMBER': 'September',
+                'OKTOBER': 'October',
+                'NOVEMBER': 'November',
+                'DESEMBER': 'December'
+            }
+
+            filtered_df['Month_Eng'] = filtered_df['Month'].str.upper().map(month_translation)
+            filtered_df['Month_Num'] = pd.to_datetime(filtered_df['Month_Eng'], format='%B').dt.month
+            filtered_df['Month_Year'] = filtered_df['Month_Eng'] + " - " + filtered_df['Year'].astype(str)
+            filtered_df = filtered_df.sort_values(by=['Year', 'Month_Num'])
+
+            # Create chart columns
+            chart_col1, chart_col2 = st.columns(2)
+
+            with chart_col1:
+                st.markdown("#### 📈 Site Monthly Availability Trend")
+                fig1 = go.Figure()
+
+                for site_id, group in filtered_df.groupby('Site Id'):
+                    # Format Target Availability for display in legend
+                    target_value = group['Target Availability (%)'].iloc[0] if not group['Target Availability (%)'].isnull().all() else 0
+                    target_label = f"Target: {int(target_value * 100)}%" if target_value % 0.01 == 0 else f"Target: {target_value * 100:.1f}%"
+
+                    fig1.add_trace(go.Scatter(
+                        x=group['Month_Year'],
+                        y=group['Avaibility'],
+                        mode='lines+markers+text',
+                        name=site_id,  # Show only Site ID for Availability
+                        text=group['Avaibility'].apply(lambda x: f"{x:.2%}"),  # Format values as percentages
+                        textposition='top center',  # Position text above the dots
+                        showlegend=True
+                    ))
+                    fig1.add_trace(go.Scatter(
+                        x=group['Month_Year'],
+                        y=group['Target Availability (%)'],
+                        mode='lines+markers+text',  # Add 'text' to show labels
+                        name=target_label,  # Custom label with "Target: XX%"
+                        text=group['Target Availability (%)'].apply(lambda x: f"{x:.2%}"),  # Format values as percentages
+                        textposition='bottom center',  # Position text above the dots
+                        line=dict(dash='dash'),
+                        showlegend=True
+                    ))
+
+                fig1.update_layout(
+                    #xaxis_title="Month - Year",
+                    yaxis_title="Availability",
+                    hovermode='x unified',
+                    #legend_title="Site ID",
+                    yaxis_tickformat=".0%",
+                    yaxis=dict(
+                        range=[0, 1],  # Set y-axis range from 0% to 100%
+                        tickmode="linear",  # Use linear ticks
+                        tick0=0,           # Start ticks at 0
+                        dtick=0.1          # Set ticks every 10% (0.1)
+                    ),
+                    legend=dict(
+                        orientation="h",     # horizontal legend
+                        yanchor="top",
+                        y=-0.3,              # adjust as needed to move it below the chart
+                        xanchor="center",
+                        x=0.5
+                    )
+                )
+                st.plotly_chart(fig1, use_container_width=True)
+
+            with chart_col2:
+                st.markdown("#### 💰 Nominal PO vs Penalty")
+                fig2 = go.Figure()
+
+                for site_id, group in filtered_df.groupby('Site Id'):
+                    fig2.add_trace(go.Scatter(
+                        x=group['Month_Year'],
+                        y=group['Nominal PO'],
+                        mode='lines+markers+text',
+                        name=f'{site_id} - PO',
+                        line=dict(color='green'),
+                        text=group['Nominal PO'].apply(lambda x: f"{x:,.0f}"),
+                        textposition='top center',
+                        textfont=dict(color='green', size=10)
+                    ))
+                    fig2.add_trace(go.Scatter(
+                        x=group['Month_Year'],
+                        y=group['Nilai Penalty'],
+                        mode='lines+markers+text',
+                        name=f'{site_id} - Penalty',
+                        fill='tozeroy',
+                        line=dict(color='red'),
+                        fillcolor='rgba(255, 0, 0, 0.2)',  # Semi-transparent red
+                        text=group['Nilai Penalty'].apply(lambda x: f"{x:,.0f}"),
+                        textposition='top center',
+                        textfont=dict(color='red', size=10)
+                    ))
+
+                fig2.update_layout(
+                    #xaxis_title="Month - Year",
+                    yaxis_title="IDR",
+                    hovermode='x unified',
+                    #legend_title="Site ID",
+                    legend=dict(
+                        orientation="h",     # horizontal legend
+                        yanchor="top",
+                        y=-0.3,              # adjust as needed to move it below the chart
+                        xanchor="center",
+                        x=0.5
+                    )
+                )
+                st.plotly_chart(fig2, use_container_width=True)
+
+        # --- Display Filtered Table ---
+        if filtered_df.empty:
+            st.info("No data matches the selected filters.")
+        else:
+            st.dataframe(style_cdc(filtered_df))
+
+            # --- Achievement Summary ---
+            if 'Ava Achievement' in filtered_df.columns:
+                st.markdown("### 🎯 Achievement Summary")
+                st.dataframe(
+                    filtered_df['Ava Achievement']
+                    .value_counts()
+                    .reset_index()
+                    .rename(columns={'index': 'Achievement', 'Ava Achievement': 'Count'})
+                )
+            else:
+                st.info("'Ava Achievement' column not available in the data.")
+
+
+with tab2:
     # st.header("Filters (Daily Tracker)")
 
     # Create two rows for the filters layout
@@ -173,7 +442,7 @@ with tab1:
         mime='text/csv'
     )
 
-with tab2:
+with tab3:
     # --- Area and Regional Filters Above the Table --- 
     # st.header("Filters (Summary View)")
 
@@ -269,7 +538,7 @@ with tab2:
         styled_summary = highlight_availability(monthly_summary_pivot)
 
         # Display the styled dataframe
-        st.dataframe(styled_summary)
+        st.dataframe(styled_summary, height=700)
 
         # --- Download Button ---
         st.download_button(
@@ -278,3 +547,4 @@ with tab2:
             file_name="site_availability_summary.csv",
             mime="text/csv"
         )
+
