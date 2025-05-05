@@ -226,7 +226,7 @@ with tab1:
                         mode='lines+markers+text',
                         name=site_id,  # Show only Site ID for Availability
                         text=group['Avaibility'].apply(lambda x: f"{x:.2%}"),  # Format values as percentages
-                        textposition='top center',  # Position text above the dots
+                        textposition='bottom center',  # Position text above the dots
                         showlegend=True
                     ))
                     fig1.add_trace(go.Scatter(
