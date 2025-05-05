@@ -145,11 +145,20 @@ with tab1:
                 st.session_state.default_site_index = random.randint(1, len(site_choices) - 1) if len(site_choices) > 1 else 0           
             
             with col4:
-                selected_site = st.selectbox(
-                    "Select Site ID",
-                    options=site_choices,
-                    index=st.session_state.default_site_index
-                )
+                if site_choices:
+                    safe_index = (
+                        st.session_state.default_site_index
+                        if st.session_state.default_site_index < len(site_choices)
+                        else 0
+                    )
+                    selected_site = st.selectbox(
+                        "Select Site ID",
+                        options=site_choices,
+                        index=safe_index
+                    )
+                else:
+                    st.warning("No available Site IDs to select.")
+                    selected_site = "All"
 
                 #selected_site = st.selectbox("Select Site ID", options=["All"] + available_sites)
                 #selected_site = st.selectbox("Select Site ID", options=site_choices, index=default_index)
