@@ -39,7 +39,7 @@ with st.sidebar:
 if st.session_state.page == "📅 CDC Availability":
     st.title("📅 CDC Availability")
     # === File Paths ===
-    file_path1 = "data/CDC_Availability_2025_194 sites.xlsx"
+    file_path1 = "data/CDC_Availability_2025_194.xlsx"
     file_path2 = "data/ESTIMASIPO2025.xlsx"
 
     # === Load First File ===
