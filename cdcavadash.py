@@ -249,7 +249,7 @@ with tab1:
                     ),
                     #xaxis_title="Month - Year",
                     yaxis_title="Availability",
-                    hovermode='x unified',
+                    hovermode='closest',
                     #legend_title="Site ID",
                     yaxis_tickformat=".0%",
                     yaxis=dict(
@@ -305,7 +305,7 @@ with tab1:
                     ),
                     #xaxis_title="Month - Year",
                     yaxis_title="IDR",
-                    hovermode='x unified',
+                    hovermode='closest',
                     #legend_title="Site ID",
                     legend=dict(
                         orientation="h",     # horizontal legend
@@ -496,7 +496,7 @@ with tab2:
             xaxis_title="Date",
             yaxis_title="Availability (%)",
             showlegend=True,
-            hovermode='x unified',
+            hovermode='closest',
             plot_bgcolor='white',
             xaxis=dict(range=[selected_date[0], selected_date[1]])
         )
