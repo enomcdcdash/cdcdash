@@ -1,0 +1,197 @@
+area,regional,site_id,site_name,liter_per_hari
+Area1,Sumbagsel,GNS214,Way Terusan,40
+Area1,Sumbagsel,OKI444,Simpang Tiga Makmur,40
+Area1,Sumbagsel,LIW102,Bandar Negeri Suoh,40
+Area1,Sumbagsel,MAB075,PT. SAL CDC,40
+Area1,Sumbagsel,MRD038,Wates Sindang Danau,40
+Area1,Sumbagsel,MTK004,Cinta Damai,40
+Area1,Sumbagsel,OKI094,Sungai Ketupak,40
+Area1,Sumbagsel,OKI233,Sungai Pidada,40
+Area1,Sumbagsel,OKI303,Sungai Pasir,40
+Area1,Sumbagsel,OKI373,KUALASUNGAIJERUJU,40
+Area1,Sumbagsel,OKI405,Sungai Pasir Darat,40
+Area1,Sumbagsel,OKI407,SINGAIPIDADA2,40
+Area1,Sumbagsel,OKI408,SUNGAI SIBUR,40
+Area1,Sumbagsel,OKI409,SUNGAI SOMOR,40
+Area1,Sumbagsel,PBI060,Medco Tabuan,40
+Area1,Sumbagsel,SAT111,PT Surya Bumi Argo Langgeng,40
+Area1,Sumbagsel,SKY135,Ketapat Bening,40
+Area1,Sumbagsel,SPN028,Bukit Namora,40
+Area1,Sumbagteng,BKG675,PT. Ciliandra Perkasa,40
+Area1,Sumbagteng,BLS113,Sekapas,40
+Area1,Sumbagteng,BLS165,TELUK KEPAU,40
+Area1,Sumbagteng,PKR100,KEBUN PENARIKAN,40
+Area1,Sumbagteng,PKR661,MAYANGSARI 2,40
+Area1,Sumbagteng,PPN174,KM 45 SONTANG,40
+Area1,Sumbagteng,PPN215,PT MASUBA CITRA MANDIRI,40
+Area1,Sumbagteng,RAI009,Pulau Panjang ,40
+Area1,Sumbagteng,TBH075,Teluk Bakau Estate,40
+Area1,Sumbagteng,TBH111,MGI PULAI / CENDANA ESTATE,40
+Area1,Sumbagteng,TBH708,Tanjung Simpang,40
+Area1,Sumbagteng,UJT016,PT JATIM,40
+Area3,Balnus,BIM190,SORI BALISAN DMT,40
+Area3,Balnus,NTG034,PULAU MESSA,40
+Area3,Balnus,KAI120,LIRAN,40
+Area3,Balnus,KPG325,NETEMNANU SELATAN,40
+Area3,Balnus,LBJ013,PAPAGARANG,40
+Area3,Balnus,MME177,N3T_PALUEKESOKOJA,40
+Area3,Balnus,LBJ011,Pulau Komodo,40
+Area3,Balnus,MME076,PULAU DOI,40
+Area3,Balnus,MME179,RERUWAIRERE ex Weelimbu,40
+Area3,Balnus,RTG093,LIANGBUA,40
+Area3,Balnus,WKB060,UMBU RATU,40
+Area3,Jatim,BWI055,Hutan Baluran,40
+Area3,Jatim,SMP025,Bulutimur,40
+Area3,Jatim,SMP029,MasalembuTBG,40
+Area3,Jatim,SMP032,Pulau Pagerungan TBG,40
+Area3,Jatim,SMP048,Pulau Keramain,40
+Area3,Jatim,SMP272,Sapekensasiil1,40
+Area3,Jatim,SMP273,SAPEKENPAGERUNGANKECIL1,40
+Area4,Kalimantan,BLC056,MT SK Network,40
+Area4,Kalimantan,BNT025,PT_RGAILUNG,40
+Area4,Kalimantan,COH035,MT_GAMAREKSA,40
+Area4,Kalimantan,KBA045,Desa Rampa Cengal,40
+Area4,Kalimantan,KBA059,MT Swadaya,40
+Area4,Kalimantan,KBA298,MT_SELABAK_MINAMAS,40
+Area4,Kalimantan,KBA342,BINTURUNG MINAMAS,40
+Area4,Kalimantan,KBA355,DMT_SANGSANG,40
+Area4,Kalimantan,KGN021,MT Bajayau,40
+Area4,Kalimantan,KKN224,TBG_TUMBANG HAKAU,40
+Area4,Kalimantan,KKP066,MT_PATAKPUTIH,40
+Area4,Kalimantan,KKP067,MT_BUKITBATU,40
+Area4,Kalimantan,KKP068,MT_DANAU RAWA,40
+Area4,Kalimantan,KKP069,TB_TMBGTUKUNExMT_ASAMBR130,40
+Area4,Kalimantan,KKP072,MT_BAJUH,40
+Area4,Kalimantan,TRG794,BALSAM HIGHWAY_KM 20,40
+Area4,Kalimantan,KPA028,TB_HANOI,40
+Area4,Kalimantan,KPA045,TB_PTKSIEST,40
+Area4,Kalimantan,KPA059,"TB_KSI3exKerrySawitIndonesia,PT",40
+Area4,Kalimantan,KPA068,TB_TUMBANGMANJUL,40
+Area4,Kalimantan,KPA110,PT_HTIRIEST,40
+Area4,Kalimantan,KSN026,MT_HSLISAT,40
+Area4,Kalimantan,KSN034,TB_TGLAHANG(oldSPT082),40
+Area4,Kalimantan,KSN039,TB_RGTANGKO/TumbanglambiTahai,40
+Area4,Kalimantan,KSN055,Hantatiring Estate,40
+Area4,Kalimantan,KSN056,MT_ADS,40
+Area4,Kalimantan,KTP124,TBMATAN/matan,40
+Area4,Kalimantan,KTP347,TB_SUNGAI_SEPETI,40
+Area4,Kalimantan,KTP451,TBG_KENANGAMILIKGP,40
+Area4,Kalimantan,NBA056,MT_INDORESINS PUTRA MANDIRI,40
+Area4,Kalimantan,NIK015,MT_MENTOBIML,40
+Area4,Kalimantan,NNK042,MT_NJLSIMNGS,40
+Area4,Kalimantan,PBU028,MT_GSIP,40
+Area4,Kalimantan,PBU057,MT_GSPP,40
+Area4,Kalimantan,PBU079,TB_KORINDO,40
+Area4,Kalimantan,PBU083,MT_INDOKAYU,40
+Area4,Kalimantan,PBU105,MT_BWPLANTATION,40
+Area4,Kalimantan,PBU156,TB_CAMPPTPBNA,40
+Area4,Kalimantan,PBU276,PT_GUNUNG SEJAHTERA IBU PERTIWI,40
+Area4,Kalimantan,PRC025,MT Tumbang masao,40
+Area4,Kalimantan,RTA034,MT_Hasnurju,40
+Area4,Kalimantan,SAA083,PT. TEPIAN BARU,40
+Area4,Kalimantan,SAA085,PT_RPAJNG,40
+Area4,Kalimantan,SAA089,PT_LOGING,40
+Area4,Kalimantan,SAA091,PT_MRHALOK,40
+Area4,Kalimantan,SAA175,MT_KADUNGAN,40
+Area4,Kalimantan,SAA200,MT_SUSUK Ex MT_DEWATASAWITANGGANA,40
+Area4,Kalimantan,SAA426,MT_MAWAI_INDAH,40
+Area4,Kalimantan,SAA448,MT_MATA_AIR KAUBUN,40
+Area4,Kalimantan,SAA589,DMT MANDU DALAM,40
+Area4,Kalimantan,SBS087,MT_DESAMADAK,40
+Area4,Kalimantan,SBS088,MT_DSMARIBAS,40
+Area4,Kalimantan,SDW043,Tanah Mea,40
+Area4,Kalimantan,SDW054,TB_Loaderas,40
+Area4,Kalimantan,SDW061,MT_MRBUNYUT,40
+Area4,Kalimantan,SMA014,PT Sungai Rangit,40
+Area4,Kalimantan,SMA018,TB_SEIRAJAexSeibaru,40
+Area4,Kalimantan,TRG789,BALSAM HIGHWAY_TELUK DALAM,40
+Area4,Kalimantan,SMR529,TB_HIGHWAY BPPSMD KM82,40
+Area4,Kalimantan,SPT079,MT_WNAPUNDU,40
+Area4,Kalimantan,SPT133,MT_KIU KRUING,40
+Area4,Kalimantan,STA091,SUKAUHULU,40
+Area4,Kalimantan,STA125,MGM/Sawit,40
+Area4,Kalimantan,STA184,MT_SEIANTU / MT_FLAMBOYAN,40
+Area4,Kalimantan,TJS004,Repeater Sajau,40
+Area4,Kalimantan,TJS020,MT_MIPISAT,40
+Area4,Kalimantan,TNR074,MT_LONG BELIU,40
+Area4,Kalimantan,TNR204,MALINDOMAS,40
+Area4,Kalimantan,TRG122,MT_LMTALIHAN,40
+Area4,Kalimantan,TRG157,MT_KM55,40
+Area4,Kalimantan,TRG166,MT_MRPANTUAN,40
+Area4,Kalimantan,TRG208,MT_DMANGKAN,40
+Area4,Kalimantan,TRG439,MT_SEMOI_KM38,40
+Area4,Kalimantan,TRG553,MT_DESA SEPATIN ANGGANA,40
+Area4,Kalimantan,TRG643,MT_HIGHWAY BPPSMD KM45,40
+Area4,Kalimantan,TRG644,MT_HIGHWAY BPPSMD KM54,40
+Area4,Kalimantan,TRG645,TB_HIGHWAY BPPSMD KM67,40
+Area4,Kalimantan,TRG790,BALSAM HIGHWAY_TELUK DALAM 1,40
+Area4,Kalimantan,TRG791,BALSAM HIGHWAY_SAMBOJA KUALA,40
+Area4,Puma,AGA021,Bandara Ewer Fr SP7 Timika,40
+Area4,Puma,BIA019,DMT Rep. Owi,40
+Area4,Puma,BTI007,Arandai,40
+Area4,Puma,BTI013,TBG Kelapa Dua,40
+Area4,Puma,BTI059,DMT Aroba Babo,40
+Area4,Puma,BTI108,DMT Forada 2,40
+Area4,Puma,BTI058,Meyado ex Pratelindo Tanimbar,40
+Area4,Puma,FFK013,DMT Teluk Patipi,40
+Area4,Puma,FFK016,Protelindo Karas,40
+Area4,Puma,JAP646,TBG Elelim Yalimo,40
+Area4,Puma,KEP006,DMT Distrik Assue,40
+Area4,Puma,KMN010,DMT Kambraw,40
+Area4,Puma,MRK046,TBG Asiki Kombiop,40
+Area4,Puma,MSH045,TBG Rep. Lumute,40
+Area4,Puma,MSH046,TBG Latonepatae,40
+Area4,Puma,MXW060,New_Redep067 / DMT Guli-Guli,40
+Area4,Puma,MSH085,Lahutuban Manipa,40
+Area4,Puma,MSH112,TBG Kiliwaru,40
+Area4,Puma,MSH521,Pulau Parang,40
+Area4,Puma,NAB023,TBG Napan,40
+Area4,Puma,NAB024,TBG Topo,40
+Area4,Puma,NLA211,DMT Ilath Bual,40
+Area4,Puma,SMI128,Gesa Baru,40
+Area4,Puma,SMI129,Teba,40
+Area4,Puma,SMI131,Dabra,40
+Area4,Puma,SML112,TBG Romean,40
+Area4,Puma,TIM065,DMT Mimika Tengah,40
+Area4,Puma,TIM288,DMT Pantai Keakwa,40
+Area4,Puma,TMR005,DMT Miri Fr Combat New Waepo relok ke DMT Miri,40
+Area4,Puma,TMR006,DMT Getantiri,40
+Area4,Puma,TMR058,CMI Getentiri Jair,40
+Area4,Puma,TUL019,Benjina Fr Wer Tamrian,40
+Area4,Puma,TUL146,TBG Lamerang Wokam,40
+Area4,Puma,TUL163,TBG Dullah Laut,40
+Area4,Puma,TUL326,DMT Namara Aru,40
+Area4,Puma,TUL328,DMT Ngafan Besar,40
+Area4,Sulawesi,BAU073,Protelindo Jaya Makmur Binongko,40
+Area4,Sulawesi,COI346,Combat Pulau Satangnga Ex Protelindo Karanrang,40
+Area4,Sulawesi,KDI049,DMT Harita Tanjung Karang,40
+Area4,Sulawesi,KKA092,DMT Koreiha,40
+Area4,Sulawesi,LBA016,TBG Madopolo,40
+Area4,Sulawesi,LBA090,DMT Batang Lomang,40
+Area4,Sulawesi,LWK201,TBG Kabalutan,40
+Area4,Sulawesi,MLE064,TBG Salu Boronan Saluputi,40
+Area4,Sulawesi,MLE066,Protelindo Sadan Balusu,40
+Area4,Sulawesi,MRW048,DMT Salenda,40
+Area4,Sulawesi,MRW219,DMT Pulau Dua Darat,40
+Area4,Sulawesi,PKJ060,Protelindo Barang Caddi Kepulauan,40
+Area4,Sulawesi,PSO032,DMT Mayoa,40
+Area4,Sulawesi,PSO105,TBG SPS,40
+Area4,Sulawesi,RHA048,TBG Towea,40
+Area4,Sulawesi,SAK023,DMT Labobo (old LWK088),40
+Area4,Sulawesi,SAK028,TBG Bangkurung,40
+Area4,Sulawesi,SLY023,TBG Manarai,40
+Area4,Sulawesi,SLY024,DMT Nyiur Indah Takabonerate,40
+Area4,Sulawesi,SLY030,Protelindo Pasimamai,40
+Area4,Sulawesi,SLY079,Rep Pasilambena Ex DMT Bayang,40
+Area4,Sulawesi,SLY080,Rep. Pasimarannu Ex TBG Bonegunu,40
+Area4,Sulawesi,SNN012,DMT Taliabu / DMT Pancuran Taliabu,40
+Area4,Sulawesi,SNN013,DMT Holbota Taliabu,40
+Area4,Sulawesi,SNN015,DMT Losseng Taliabu,40
+Area4,Sulawesi,SNN016,DMT Buya Mangoli,40
+Area4,Sulawesi,TDE006,Rep. Weda,40
+Area4,Sulawesi,TDO142,Protelindo Kinahobutan,40
+Area4,Sulawesi,THN024,DMT Sangir Talaud,40
+Area4,Sulawesi,TKA034,DMT Tanakeke,40
+Area4,Sulawesi,TLI008,Rep. Pasir Putih,40
+Area4,Sulawesi,UPX147,DMT Baranglompo Eks Tolala,40
+Area4,Sulawesi,WTG029,DMT Labae,40
