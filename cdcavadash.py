@@ -387,7 +387,7 @@ if st.session_state.page == "📅 CDC Availability":
                 xaxis_title="Date",
                 yaxis_title="Availability (%)",
                 showlegend=True,
-                hovermode='closest',
+                hovermode='x unified',
                 plot_bgcolor='white',
                 xaxis=dict(range=[selected_date[0], selected_date[1]])
             )
