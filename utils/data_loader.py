@@ -5,7 +5,7 @@ import os
 import re
 
 def load_availability_data():
-    file_path = "C:\\Ariya Data\\python\\dashboard\\data\\CDC_Availability_2025_194 sites.xlsx"
+    file_path = "date/CDC_Availability_2025_194.xlsx"
     try:
         df = pd.read_excel(file_path, sheet_name="Ava CDC")
     except Exception as e:
@@ -22,7 +22,7 @@ def load_availability_data():
     return melted_df
 
 def load_cdc_po_data():
-    file_path = "C:\\Ariya Data\\python\\dashboard\\data\\ESTIMASI PO 2025.xlsx"
+    file_path = "data/ESTIMASIPO2025.xlsx"
     filename = os.path.basename(file_path)
     match = re.search(r"\d{4}", filename)
     cdc_year = match.group(0) if match else "Unknown"
@@ -58,7 +58,7 @@ def load_cdc_po_data():
     return cdc_df
 
 def load_dapot_alpro_data():
-    file_path = "C:\\Ariya Data\\python\\dashboard\\data\\Dapot_Alpro_CDC_2025.xlsx"
+    file_path = "data/Dapot_Alpro_CDC_2025.xlsx"
     sheet_names = ["Sumbagsel", "Sumbagteng", "Jawa Timur", "Bali Nusra", "Kalimantan", "Puma", "Sulawesi"]
 
     try:
