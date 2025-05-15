@@ -5,7 +5,7 @@ import os
 import re
 
 def load_availability_data():
-    file_path = "date/CDC_Availability_2025_194.xlsx"
+    file_path = "data/CDC_Availability_2025_194.xlsx"
     try:
         df = pd.read_excel(file_path, sheet_name="Ava CDC")
     except Exception as e:
