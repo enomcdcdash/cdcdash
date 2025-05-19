@@ -183,7 +183,7 @@ def show():
                     foto_list = json.loads(foto_evidence_drive_json)
                 except Exception:
                     return ""
-    
+            
                 links = []
                 for item in foto_list:
                     filename = item.get("filename")
@@ -193,7 +193,7 @@ def show():
                         href = f'<a href="{url}" target="_blank">📷 {filename}</a>'
                         links.append(href)
                 return "<br>".join(links) if links else ""
-    
+                
             if "foto_evidence_drive" in df_latest.columns:
                 df_latest["foto_evidence"] = df_latest["foto_evidence_drive"].apply(get_photo_links_drive)
             else:
