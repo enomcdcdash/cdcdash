@@ -61,10 +61,13 @@ def upload_photo_to_drive(
         fields="id, webContentLink, webViewLink"
     ).execute()
 
-    # 🔓 Make the file publicly viewable
+    # 👇 Make the file publicly viewable
     service.permissions().create(
         fileId=file.get("id"),
-        body={"role": "reader", "type": "anyone"},
+        body={
+            "type": "anyone",
+            "role": "reader"
+        }
     ).execute()
 
     return file.get("id"), file.get("webContentLink")
