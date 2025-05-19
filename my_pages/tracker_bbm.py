@@ -8,6 +8,7 @@ import datetime
 import json
 from zoneinfo import ZoneInfo
 from utils.drive_utils import upload_photo_to_drive, get_photo_download_link
+from utils.sheets_utils import append_row_to_sheet, read_sheet_as_dataframe
 
 def show():
     st.title("\u26FD Tracker Pengisian BBM")
@@ -16,12 +17,13 @@ def show():
     # Cache the data loading function
     @st.cache_data
     def load_bbm_data():
-        # Load the CSV files
-        df_pengisian = pd.read_csv("pengisian_bbm_streamlit.csv")
+        sheet_id = "13A8ckogwxlMYDXKXrW84h0XkWOIbIMUWiePK6uTRzfc"
+        worksheet_name = "pengisian_bbm"
+        df_pengisian = read_sheet_as_dataframe(sheet_id, worksheet_name)
         df_pengisian["tanggal_pengisian"] = pd.to_datetime(df_pengisian["tanggal_pengisian"], errors='coerce')
-
+    
         site_master = pd.read_csv("all_site_master.csv")
-
+    
         # Merge the two dataframes
         df = pd.merge(df_pengisian, site_master, on="site_id", how="left")
         
@@ -86,22 +88,17 @@ def show():
                         st.success(f"✅ Uploaded {photo_filename} to Google Drive")
             
                     # 2. Prepare new data row with photo metadata
-                    new_data = pd.DataFrame([{
-                        "site_id": site_id,
-                        "tanggal_pengisian": pd.to_datetime(tanggal_pengisian),
-                        "jumlah_pengisian_liter": jumlah_pengisian,
-                        "foto_evidence_drive": json.dumps(uploaded_file_ids)  # Store JSON string
-                    }])
+                    new_row = [
+                        site_id,
+                        tanggal_pengisian.strftime("%Y-%m-%d"),
+                        jumlah_pengisian,
+                        json.dumps(uploaded_file_ids)  # Store JSON string
+                    ]
             
-                    # 3. Load existing data and append new row
-                    try:
-                        existing = pd.read_csv("pengisian_bbm_streamlit.csv", parse_dates=["tanggal_pengisian"])
-                        updated = pd.concat([existing, new_data], ignore_index=True)
-                    except FileNotFoundError:
-                        updated = new_data
-            
-                    # 4. Save updated CSV
-                    updated.to_csv("pengisian_bbm_streamlit.csv", index=False, date_format="%Y-%m-%d")
+                    # 3. Append the new row to Google Sheets
+                    sheet_id = "13A8ckogwxlMYDXKXrW84h0XkWOIbIMUWiePK6uTRzfc"
+                    worksheet_name = "pengisian_bbm"
+                    append_row_to_sheet(sheet_id, worksheet_name, new_row)
             
                     st.success(f"✅ Data dan foto untuk site {site_id} berhasil disimpan.")
                     st.cache_data.clear()
