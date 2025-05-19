@@ -14,6 +14,10 @@ def get_drive_service():
     json_str = base64.b64decode(base64_creds).decode("utf-8")
     credentials_info = json.loads(json_str)
 
+    st.write("Length of base64 string:", len(base64_creds))
+    st.write("Decoded JSON preview:", json_str[:200])  # print first 200 chars
+    st.write("Credentials JSON keys:", list(credentials_info.keys()))
+    
     credentials = service_account.Credentials.from_service_account_info(
         credentials_info,
         scopes=["https://www.googleapis.com/auth/drive"]
@@ -56,10 +60,6 @@ def upload_photo_to_drive(
         media_body=media,
         fields="id, webContentLink, webViewLink"
     ).execute()
-
-    st.write("Length of base64 string:", len(base64_creds))
-    st.write("Decoded JSON preview:", json_str[:200])  # print first 200 chars
-    st.write("Credentials JSON keys:", list(credentials_info.keys()))
 
     return file.get("id"), file.get("webContentLink")
 
