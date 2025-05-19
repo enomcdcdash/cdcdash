@@ -1,4 +1,5 @@
 # utils/sheets_utils.py
+
 import base64
 import json
 import streamlit as st
@@ -6,6 +7,7 @@ import pandas as pd
 import gspread
 from google.oauth2.service_account import Credentials
 
+# Use @st.cache_resource so we don't re-authenticate every time
 @st.cache_resource
 def get_gspread_client():
     # Decode base64 string from Streamlit secrets
@@ -20,17 +22,17 @@ def get_gspread_client():
             "https://www.googleapis.com/auth/drive"
         ]
     )
-    client = gspread.authorize(credentials)
-    return client
+    return gspread.authorize(credentials)
 
 def append_row_to_sheet(sheet_id, worksheet_name, row_data):
+    client = get_gspread_client()
     sh = client.open_by_key(sheet_id)
     worksheet = sh.worksheet(worksheet_name)
 
     # Ensure row_data matches header order
     if isinstance(row_data, dict):
-        header = worksheet.row_values(1)  # ['site_id', 'tanggal_pengisian', ...]
-        row_data = [row_data.get(col, "") for col in header]  # Ordered list
+        header = worksheet.row_values(1)  # e.g., ['site_id', 'tanggal_pengisian', ...]
+        row_data = [row_data.get(col, "") for col in header]  # Convert dict to ordered list
 
     worksheet.append_row(row_data, value_input_option="USER_ENTERED")
 
