@@ -202,6 +202,20 @@ def show():
             df_display = df[display_cols].copy()
             df_display["foto_evidence"] = df_display["foto_evidence"].fillna("")
 
+            # Add "No." column starting from 1
+            df_display.reset_index(drop=True, inplace=True)
+            df_display.insert(0, "No.", df_display.index + 1)
+
+            # Custom CSS styles for header centering and vertical alignment
+            styles = """
+            <style>
+            table thead th {
+                text-align: center !important;
+                vertical-align: middle !important;
+            }
+            </style>
+            """
+
             st.markdown(
                 df_display.to_html(escape=False, index=False),
                 unsafe_allow_html=True
