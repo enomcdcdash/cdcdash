@@ -95,19 +95,15 @@ def show():
                         "tanggal_pengisian": tanggal_pengisian.strftime("%Y-%m-%d"),
                         "jumlah_pengisian_liter": jumlah_pengisian,
                         "foto_evidence_drive": json.dumps(uploaded_file_ids),
-                        # Add any other required fields (area, regional, etc.)
+                        # Add more fields as needed
                     }
                                
                     # 3. Append the new row to Google Sheets
                     sheet_id = "13A8ckogwxlMYDXKXrW84h0XkWOIbIMUWiePK6uTRzfc"
                     worksheet_name = "pengisian_bbm"
-                    sheet_columns = ["site_id", "tanggal_pengisian", "jumlah_pengisian_liter", "foto_evidence_drive"]
-
-                    # Convert dict to list matching columns:
-                    row_list = [new_row[col] for col in sheet_columns]
-
-                    append_row_to_sheet(sheet_id, worksheet_name, row_list)
-                    # append_row_to_sheet(sheet_id, worksheet_name, new_row)
+                    
+                    # append_row_to_sheet(sheet_id, worksheet_name, row_list)
+                    append_row_to_sheet(sheet_id, worksheet_name, new_row)
             
                     st.success(f"✅ Data dan foto untuk site {site_id} berhasil disimpan.")
                     st.cache_data.clear()
