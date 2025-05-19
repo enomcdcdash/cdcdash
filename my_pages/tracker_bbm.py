@@ -221,6 +221,10 @@ def show():
                 unsafe_allow_html=True
             )
 
+            if st.button("🔄 Refresh Data"):
+            st.cache_data.clear()
+            st.rerun()
+            
             # ⬇ Export to Excel (excluding HTML links)
             export_cols = [col for col in display_cols if col != "foto_evidence"]
             excel_buffer = BytesIO()
