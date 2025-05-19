@@ -5,3 +5,6 @@ matplotlib
 openpyxl
 plotly
 XlsxWriter
+google-auth
+google-auth-oauthlib
+google-api-python-client
