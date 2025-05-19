@@ -177,16 +177,17 @@ def show():
             df_latest["tanggal_pengisian"] = df_latest["tanggal_pengisian"].dt.date
             df_latest["tanggal_habis"] = df_latest["tanggal_habis"].dt.date
 
+            # Define helper to create Google Drive viewable URL
             def get_photo_download_link(file_id):
                 return f"https://drive.google.com/file/d/{file_id}/view?usp=sharing"
-    
+            
             # Function to convert photo metadata JSON to clickable links
             def get_photo_links_drive(foto_evidence_drive_json):
                 try:
                     foto_list = json.loads(foto_evidence_drive_json)
                 except Exception:
                     return ""
-            
+                
                 links = []
                 for item in foto_list:
                     filename = item.get("filename")
@@ -196,18 +197,23 @@ def show():
                         href = f'<a href="{url}" target="_blank">📷 {filename}</a>'
                         links.append(href)
                 return "<br>".join(links) if links else ""
-            st.write("foto_evidence_drive column exists:", "foto_evidence_drive" in df_latest.columns)
-            st.write("Sample values:", df_latest["foto_evidence_drive"].head())
-
+            
+            # Ensure 'foto_evidence_drive' column exists
+            if "foto_evidence_drive" not in df_latest.columns:
+                df_latest["foto_evidence_drive"] = None
+            
+            # Inject sample test photo metadata (for testing)
             df_latest.loc[0, "foto_evidence_drive"] = json.dumps([
                 {"filename": "tank1.jpg", "file_id": "1AbCDefGhiJklMnopQrs"}
             ])
             
-            if "foto_evidence_drive" in df_latest.columns:
-                df_latest["foto_evidence"] = df_latest["foto_evidence_drive"].apply(get_photo_links_drive)
-            else:
-                df_latest["foto_evidence"] = ""
-    
+            # Debugging: check column and sample values
+            st.write("foto_evidence_drive column exists:", "foto_evidence_drive" in df_latest.columns)
+            st.write("Sample values:", df_latest["foto_evidence_drive"].head())
+            
+            # Convert photo metadata JSON into clickable links
+            df_latest["foto_evidence"] = df_latest["foto_evidence_drive"].apply(get_photo_links_drive)
+            
             # Columns to display
             display_cols = [
                 "area", "regional", "site_id", "site_name", "tanggal_pengisian",
@@ -217,17 +223,18 @@ def show():
             display_cols = [col for col in display_cols if col in df_latest.columns]
             df_display = df_latest[display_cols].copy()
             df_display["foto_evidence"] = df_display["foto_evidence"].fillna("")
-    
+            
             # Add row number
             df_display.reset_index(drop=True, inplace=True)
             df_display.insert(0, "No.", df_display.index + 1)
-    
+            
             # Show styled table with photo links clickable
             st.markdown(
                 df_display.to_html(escape=False, index=False),
                 unsafe_allow_html=True
             )
-
+            
+            # Display raw link column values for debugging
             st.write("Foto Evidence column values:")
             st.write(df_display["foto_evidence"].head())
 
