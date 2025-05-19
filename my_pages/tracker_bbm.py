@@ -5,6 +5,7 @@ from io import BytesIO
 import os
 import base64
 import datetime
+from utils.drive_utils import upload_photo_to_drive, get_photo_download_link
 
 def show():
     st.title("\u26FD Tracker Pengisian BBM")
@@ -66,34 +67,41 @@ def show():
                 elif any(photo.size > 2 * 1024 * 1024 for photo in uploaded_photos):
                     st.warning("❗ Ukuran setiap file harus maksimal 2MB.")
                 else:
-                    new_data = pd.DataFrame([{
-                        "site_id": site_id,
-                        "tanggal_pengisian": pd.to_datetime(tanggal_pengisian),
-                        "jumlah_pengisian_liter": jumlah_pengisian
-                    }])
-
-                    try:
-                        existing = pd.read_csv("pengisian_bbm_streamlit.csv", parse_dates=["tanggal_pengisian"])
-                        updated = pd.concat([existing, new_data], ignore_index=True)
-                    except FileNotFoundError:
-                        updated = new_data
-
-                    updated.to_csv("pengisian_bbm_streamlit.csv", index=False, date_format="%Y-%m-%d")
-
+                    # 1. Upload photos to Google Drive and collect metadata
+                    uploaded_file_ids = []
                     for i, photo in enumerate(uploaded_photos):
                         photo_ext = photo.name.split(".")[-1]
                         timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
                         unique_suffix = f"{i+1}"
                         photo_filename = f"{site_id}_{timestamp}_{unique_suffix}.{photo_ext}"
-                        photo_path = os.path.join(STATIC_PHOTO_DIR, photo_filename)
-
-                        # Save uploaded photo directly to the static folder
-                        with open(photo_path, "wb") as f:
-                            f.write(photo.getbuffer())
-
-                        file_size_kb = round(os.path.getsize(photo_path) / 1024, 2)
-                        st.success(f"✅ Saved {photo_filename} ({file_size_kb} KB)")
-                    
+            
+                        file_metadata = {
+                            "name": photo_filename,
+                            # "parents": ["your_drive_folder_id"]  # Optional: replace with your Drive folder ID
+                        }
+                        file_id = upload_photo_to_drive(photo, file_metadata)
+                        uploaded_file_ids.append({"filename": photo_filename, "file_id": file_id})
+            
+                        st.success(f"✅ Uploaded {photo_filename} to Google Drive")
+            
+                    # 2. Prepare new data row with photo metadata
+                    new_data = pd.DataFrame([{
+                        "site_id": site_id,
+                        "tanggal_pengisian": pd.to_datetime(tanggal_pengisian),
+                        "jumlah_pengisian_liter": jumlah_pengisian,
+                        "foto_evidence_drive": json.dumps(uploaded_file_ids)  # Store JSON string
+                    }])
+            
+                    # 3. Load existing data and append new row
+                    try:
+                        existing = pd.read_csv("pengisian_bbm_streamlit.csv", parse_dates=["tanggal_pengisian"])
+                        updated = pd.concat([existing, new_data], ignore_index=True)
+                    except FileNotFoundError:
+                        updated = new_data
+            
+                    # 4. Save updated CSV
+                    updated.to_csv("pengisian_bbm_streamlit.csv", index=False, date_format="%Y-%m-%d")
+            
                     st.success(f"✅ Data dan foto untuk site {site_id} berhasil disimpan.")
                     st.cache_data.clear()
                     st.rerun()
@@ -164,22 +172,24 @@ def show():
             df["tanggal_habis"] = df["tanggal_habis"].dt.date
             df.index += 1  # start index from 1
 
-            # 🔗 Add foto_evidence links
-            def get_photo_links(site_id):
-                site_photos = [f for f in os.listdir(STATIC_PHOTO_DIR) if f.startswith(site_id)]
+            def get_photo_links_drive(foto_evidence_drive_json):
+                try:
+                    foto_list = json.loads(foto_evidence_drive_json)
+                except Exception:
+                    return ""
+            
                 links = []
-                for photo in sorted(site_photos):
-                    file_path = os.path.join(STATIC_PHOTO_DIR, photo)
-                    if os.path.isfile(file_path):
-                        with open(file_path, "rb") as img_file:
-                            img_bytes = img_file.read()
-                        ext = os.path.splitext(photo)[1][1:]  # e.g. 'jpg', 'png'
-                        b64 = base64.b64encode(img_bytes).decode()
-                        href = f'<a href="data:image/{ext};base64,{b64}" download="{photo}">⬇️ {photo}</a>'
+                for item in foto_list:
+                    filename = item.get("filename")
+                    file_id = item.get("file_id")
+                    if file_id:
+                        # Use helper to get Drive download link (with file_id)
+                        url = get_photo_download_link(file_id)
+                        href = f'<a href="{url}" target="_blank" download="{filename}">⬇️ {filename}</a>'
                         links.append(href)
                 return "<br>".join(links) if links else ""
 
-            df["foto_evidence"] = df["site_id"].apply(get_photo_links)
+            df["foto_evidence"] = df["foto_evidence_drive"].apply(get_photo_links_drive)
 
             # Select columns to display
             display_cols = [
