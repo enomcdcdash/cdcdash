@@ -57,6 +57,10 @@ def upload_photo_to_drive(
         fields="id, webContentLink, webViewLink"
     ).execute()
 
+    st.write("Length of base64 string:", len(base64_creds))
+    st.write("Decoded JSON preview:", json_str[:200])  # print first 200 chars
+    st.write("Credentials JSON keys:", list(credentials_info.keys()))
+
     return file.get("id"), file.get("webContentLink")
 
 def get_photo_download_link(file_id: str) -> str:
