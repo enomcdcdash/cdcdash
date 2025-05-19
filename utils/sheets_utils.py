@@ -23,10 +23,15 @@ def get_gspread_client():
     client = gspread.authorize(credentials)
     return client
 
-def append_row_to_sheet(sheet_id: str, worksheet_name: str, row_data: list):
-    client = get_gspread_client()
-    sheet = client.open_by_key(sheet_id)
-    worksheet = sheet.worksheet(worksheet_name)
+def append_row_to_sheet(sheet_id, worksheet_name, row_data):
+    sh = client.open_by_key(sheet_id)
+    worksheet = sh.worksheet(worksheet_name)
+
+    # If row_data is a dict, convert it to a list in the correct column order
+    if isinstance(row_data, dict):
+        header = worksheet.row_values(1)  # get header from first row
+        row_data = [row_data.get(col, "") for col in header]
+
     worksheet.append_row(row_data, value_input_option="USER_ENTERED")
 
 def read_sheet_as_dataframe(sheet_id: str, worksheet_name: str) -> pd.DataFrame:
