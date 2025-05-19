@@ -27,10 +27,10 @@ def append_row_to_sheet(sheet_id, worksheet_name, row_data):
     sh = client.open_by_key(sheet_id)
     worksheet = sh.worksheet(worksheet_name)
 
-    # If row_data is a dict, convert it to a list in the correct column order
+    # Ensure row_data matches header order
     if isinstance(row_data, dict):
-        header = worksheet.row_values(1)  # get header from first row
-        row_data = [row_data.get(col, "") for col in header]
+        header = worksheet.row_values(1)  # ['site_id', 'tanggal_pengisian', ...]
+        row_data = [row_data.get(col, "") for col in header]  # Ordered list
 
     worksheet.append_row(row_data, value_input_option="USER_ENTERED")
 
