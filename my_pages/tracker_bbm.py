@@ -176,6 +176,9 @@ def show():
             df_latest["status_bbm"] = df_latest.apply(warnacol, axis=1)
             df_latest["tanggal_pengisian"] = df_latest["tanggal_pengisian"].dt.date
             df_latest["tanggal_habis"] = df_latest["tanggal_habis"].dt.date
+
+            def get_photo_download_link(file_id):
+                return f"https://drive.google.com/file/d/{file_id}/view?usp=sharing"
     
             # Function to convert photo metadata JSON to clickable links
             def get_photo_links_drive(foto_evidence_drive_json):
@@ -193,7 +196,13 @@ def show():
                         href = f'<a href="{url}" target="_blank">📷 {filename}</a>'
                         links.append(href)
                 return "<br>".join(links) if links else ""
-                
+            st.write("foto_evidence_drive column exists:", "foto_evidence_drive" in df_latest.columns)
+            st.write("Sample values:", df_latest["foto_evidence_drive"].head())
+
+            df_latest.loc[0, "foto_evidence_drive"] = json.dumps([
+                {"filename": "tank1.jpg", "file_id": "1AbCDefGhiJklMnopQrs"}
+            ])
+            
             if "foto_evidence_drive" in df_latest.columns:
                 df_latest["foto_evidence"] = df_latest["foto_evidence_drive"].apply(get_photo_links_drive)
             else:
@@ -218,7 +227,10 @@ def show():
                 df_display.to_html(escape=False, index=False),
                 unsafe_allow_html=True
             )
-    
+
+            st.write("Foto Evidence column values:")
+            st.write(df_display["foto_evidence"].head())
+
             # Export Excel without photo links
             export_cols = [col for col in display_cols if col != "foto_evidence"]
             excel_buffer = BytesIO()
