@@ -109,57 +109,62 @@ def show():
 
     # Tab 2: Dashboard Status BBM
     with tab2:
-        st.header("📊 Dashboard Status BBM")
-
+        st.header("📊 Tracker Pengisian BBM")
+    
         try:
-            # Load the merged data
+            # Load data from Google Sheets and merge with site master
             df = load_bbm_data()
-
-            # Apply filters
+    
+            # Apply cascading filters
             col1, col2, col3 = st.columns(3)
             with col1:
                 area_options = df["area"].dropna().unique()
                 selected_area = st.selectbox("Pilih Area", options=["All"] + sorted(area_options.tolist()))
-
             if selected_area != "All":
                 df = df[df["area"] == selected_area]
-
+    
             with col2:
                 regional_options = df["regional"].dropna().unique()
                 if selected_area != "All":
                     regional_options = df[df["area"] == selected_area]["regional"].dropna().unique()
                 selected_regional = st.selectbox("Pilih Regional", options=["All"] + sorted(regional_options.tolist()))
-
             if selected_regional != "All":
                 df = df[df["regional"] == selected_regional]
-
+    
             with col3:
                 site_options = df["site_id"].dropna().unique()
                 if selected_regional != "All":
                     site_options = df[df["regional"] == selected_regional]["site_id"].dropna().unique()
                 selected_site = st.selectbox("Pilih Site ID", options=["All"] + sorted(site_options.tolist()))
-
             if selected_site != "All":
                 df = df[df["site_id"] == selected_site]
-
-            # Convert and calculate values
+    
+            # Convert numeric columns and datetime
             df["jumlah_pengisian_liter"] = pd.to_numeric(df["jumlah_pengisian_liter"], errors="coerce")
             df["liter_per_hari"] = pd.to_numeric(df["liter_per_hari"], errors="coerce")
-
-            df = df.sort_values("tanggal_pengisian", ascending=False).groupby("site_id", as_index=False).first()
-
-            df["tanggal_habis"] = df["tanggal_pengisian"] + pd.to_timedelta(
-                df["jumlah_pengisian_liter"] / df["liter_per_hari"], unit="D"
+            df["tanggal_pengisian"] = pd.to_datetime(df["tanggal_pengisian"], errors='coerce')
+    
+            # Process latest record per site_id
+            df_latest = (
+                df.sort_values("tanggal_pengisian", ascending=False)
+                  .groupby("site_id", as_index=False)
+                  .first()
             )
-
-            hari_berjalan = (pd.to_datetime("today") - df["tanggal_pengisian"]).dt.days
-            df["liter_terpakai"] = hari_berjalan * df["liter_per_hari"]
-
-            df["persentase_float"] = df["liter_terpakai"] / df["jumlah_pengisian_liter"]
-            df["persentase_terpakai"] = (
-                df["persentase_float"] * 100
-            ).apply(lambda x: f"{x:.2f}%" if pd.notnull(x) else "-")
-
+    
+            # Calculate tanggal_habis based on usage rate
+            df_latest["tanggal_habis"] = df_latest["tanggal_pengisian"] + pd.to_timedelta(
+                df_latest["jumlah_pengisian_liter"] / df_latest["liter_per_hari"], unit="D"
+            )
+    
+            # Calculate liters used and percentage used
+            hari_berjalan = (pd.to_datetime("today") - df_latest["tanggal_pengisian"]).dt.days
+            df_latest["liter_terpakai"] = hari_berjalan * df_latest["liter_per_hari"]
+            df_latest["persentase_float"] = df_latest["liter_terpakai"] / df_latest["jumlah_pengisian_liter"]
+            df_latest["persentase_terpakai"] = df_latest["persentase_float"].apply(
+                lambda x: f"{x:.2%}" if pd.notnull(x) else "-"
+            )
+    
+            # Define status column with emojis
             def warnacol(row):
                 if row["persentase_float"] >= 0.9:
                     return "🔴 Segera Isi BBM (90%+)"
@@ -167,18 +172,18 @@ def show():
                     return "🟠 Peringatan BBM Low (80%+)"
                 else:
                     return "🟢 Aman"
-
-            df["status_bbm"] = df.apply(warnacol, axis=1)
-            df["tanggal_pengisian"] = df["tanggal_pengisian"].dt.date
-            df["tanggal_habis"] = df["tanggal_habis"].dt.date
-            df.index += 1  # start index from 1
-
+    
+            df_latest["status_bbm"] = df_latest.apply(warnacol, axis=1)
+            df_latest["tanggal_pengisian"] = df_latest["tanggal_pengisian"].dt.date
+            df_latest["tanggal_habis"] = df_latest["tanggal_habis"].dt.date
+    
+            # Function to convert photo metadata JSON to clickable links
             def get_photo_links_drive(foto_evidence_drive_json):
                 try:
                     foto_list = json.loads(foto_evidence_drive_json)
                 except Exception:
                     return ""
-            
+    
                 links = []
                 for item in foto_list:
                     filename = item.get("filename")
@@ -188,57 +193,44 @@ def show():
                         href = f'<a href="{url}" target="_blank">📷 {filename}</a>'
                         links.append(href)
                 return "<br>".join(links) if links else ""
-
-            df["foto_evidence"] = df["foto_evidence_drive"].apply(get_photo_links_drive)
-
-            # Select columns to display
+    
+            df_latest["foto_evidence"] = df_latest["foto_evidence_drive"].apply(get_photo_links_drive)
+    
+            # Columns to display
             display_cols = [
-                "area", "regional", "site_id", "site_name", "tanggal_pengisian", "jumlah_pengisian_liter",
-                "liter_per_hari", "liter_terpakai", "persentase_terpakai",
-                "tanggal_habis", "status_bbm", "foto_evidence"
+                "area", "regional", "site_id", "site_name", "tanggal_pengisian",
+                "jumlah_pengisian_liter", "liter_per_hari", "liter_terpakai",
+                "persentase_terpakai", "tanggal_habis", "status_bbm", "foto_evidence"
             ]
-            display_cols = [col for col in display_cols if col in df.columns]
-
-            df_display = df[display_cols].copy()
+            display_cols = [col for col in display_cols if col in df_latest.columns]
+            df_display = df_latest[display_cols].copy()
             df_display["foto_evidence"] = df_display["foto_evidence"].fillna("")
-
-            # Add "No." column starting from 1
+    
+            # Add row number
             df_display.reset_index(drop=True, inplace=True)
             df_display.insert(0, "No.", df_display.index + 1)
-
-            # Custom CSS styles for header centering and vertical alignment
-            styles = """
-            <style>
-            table thead th {
-                text-align: center !important;
-                vertical-align: middle !important;
-            }
-            </style>
-            """
-
+    
+            # Show styled table with photo links clickable
             st.markdown(
                 df_display.to_html(escape=False, index=False),
                 unsafe_allow_html=True
             )
-
-           
-            
-            # ⬇ Export to Excel (excluding HTML links)
+    
+            # Export Excel without photo links
             export_cols = [col for col in display_cols if col != "foto_evidence"]
             excel_buffer = BytesIO()
             with pd.ExcelWriter(excel_buffer, engine="xlsxwriter") as writer:
-                df[display_cols].to_excel(writer, index=False, sheet_name="BBM Data")
-
+                df_latest[export_cols].to_excel(writer, index=False, sheet_name="BBM Data")
+    
             st.download_button(
                 label="📥 Export Data as Excel File",
                 data=excel_buffer.getvalue(),
                 file_name="bbm_data.xlsx",
                 mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
             )
-
+    
         except Exception as e:
             st.warning("Gagal menampilkan dashboard: " + str(e))
-
     
     # Tab 3: Riwayat Pengisian BBM
     with tab3:
