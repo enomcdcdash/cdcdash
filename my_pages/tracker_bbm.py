@@ -3,6 +3,7 @@ import streamlit as st
 import pandas as pd
 from io import BytesIO
 import os
+import base64
 import datetime
 
 def show():
@@ -168,13 +169,19 @@ def show():
                 site_photos = [f for f in os.listdir(STATIC_PHOTO_DIR) if f.startswith(site_id)]
                 links = []
                 for photo in sorted(site_photos):
-                    photo_url = f"/{STATIC_PHOTO_DIR}/{photo}"
-                    links.append(f'<a href="{photo_url}" download="{photo}">⬇️ {photo}</a>')
+                    file_path = os.path.join(STATIC_PHOTO_DIR, photo)
+                    if os.path.isfile(file_path):
+                        with open(file_path, "rb") as img_file:
+                            img_bytes = img_file.read()
+                        ext = os.path.splitext(photo)[1][1:]  # e.g. 'jpg', 'png'
+                        b64 = base64.b64encode(img_bytes).decode()
+                        href = f'<a href="data:image/{ext};base64,{b64}" download="{photo}">⬇️ {photo}</a>'
+                        links.append(href)
                 return "<br>".join(links) if links else ""
 
             df["foto_evidence"] = df["site_id"].apply(get_photo_links)
 
-            # ✨ Select columns to display
+            # Select columns to display
             display_cols = [
                 "area", "regional", "site_id", "site_name", "tanggal_pengisian", "jumlah_pengisian_liter",
                 "liter_per_hari", "liter_terpakai", "persentase_terpakai",
@@ -182,7 +189,6 @@ def show():
             ]
             display_cols = [col for col in display_cols if col in df.columns]
 
-            # 🔳 Render as HTML (supports links)
             df_display = df[display_cols].copy()
             df_display["foto_evidence"] = df_display["foto_evidence"].fillna("")
 
