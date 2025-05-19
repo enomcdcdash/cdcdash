@@ -201,16 +201,7 @@ def show():
             # Ensure 'foto_evidence_drive' column exists
             if "foto_evidence_drive" not in df_latest.columns:
                 df_latest["foto_evidence_drive"] = None
-            
-            # Inject sample test photo metadata (for testing)
-            df_latest.loc[0, "foto_evidence_drive"] = json.dumps([
-                {"filename": "tank1.jpg", "file_id": "1AbCDefGhiJklMnopQrs"}
-            ])
-            
-            # Debugging: check column and sample values
-            st.write("foto_evidence_drive column exists:", "foto_evidence_drive" in df_latest.columns)
-            st.write("Sample values:", df_latest["foto_evidence_drive"].head())
-            
+                       
             # Convert photo metadata JSON into clickable links
             df_latest["foto_evidence"] = df_latest["foto_evidence_drive"].apply(get_photo_links_drive)
             
@@ -233,10 +224,6 @@ def show():
                 df_display.to_html(escape=False, index=False),
                 unsafe_allow_html=True
             )
-            
-            # Display raw link column values for debugging
-            st.write("Foto Evidence column values:")
-            st.write(df_display["foto_evidence"].head())
 
             # Export Excel without photo links
             export_cols = [col for col in display_cols if col != "foto_evidence"]
