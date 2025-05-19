@@ -101,7 +101,13 @@ def show():
                     # 3. Append the new row to Google Sheets
                     sheet_id = "13A8ckogwxlMYDXKXrW84h0XkWOIbIMUWiePK6uTRzfc"
                     worksheet_name = "pengisian_bbm"
-                    append_row_to_sheet(sheet_id, worksheet_name, new_row)
+                    sheet_columns = ["site_id", "tanggal_pengisian", "jumlah_pengisian_liter", "foto_evidence_drive"]
+
+                    # Convert dict to list matching columns:
+                    row_list = [new_row[col] for col in sheet_columns]
+
+                    append_row_to_sheet(sheet_id, worksheet_name, row_list)
+                    # append_row_to_sheet(sheet_id, worksheet_name, new_row)
             
                     st.success(f"✅ Data dan foto untuk site {site_id} berhasil disimpan.")
                     st.cache_data.clear()
