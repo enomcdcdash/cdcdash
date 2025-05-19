@@ -303,7 +303,7 @@ def show():
             df_hist["tanggal_pengisian"] = df_hist["tanggal_pengisian"].dt.date
             
             # Your code for tab3 visualization goes here...
-            st.dataframe(df_hist[["area", "regional", "site_id", "site_name", "tanggal_pengisian", "jumlah_pengisian_liter"]])
+            st.dataframe(df_hist[["area", "regional", "site_id", "site_name", "tanggal_pengisian", "jumlah_pengisian_liter", "foto_evidence_drive"]])
             
             # Create an Excel file from the DataFrame
             excel_buffer = BytesIO()
