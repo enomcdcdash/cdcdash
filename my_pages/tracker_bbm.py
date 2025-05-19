@@ -90,14 +90,14 @@ def show():
                     
                         st.success(f"✅ Uploaded {photo_filename} to Google Drive")
             
-                    # 2. Prepare new data row with photo metadata
-                    new_row = [
-                        site_id,
-                        tanggal_pengisian.strftime("%Y-%m-%d"),
-                        jumlah_pengisian,
-                        json.dumps(uploaded_file_ids)  # Store JSON string
-                    ]
-            
+                    new_row = {
+                        "site_id": site_id,
+                        "tanggal_pengisian": tanggal_pengisian.strftime("%Y-%m-%d"),
+                        "jumlah_pengisian_liter": jumlah_pengisian,
+                        "foto_evidence_drive": json.dumps(uploaded_file_ids),
+                        # Add any other required fields (area, regional, etc.)
+                    }
+                               
                     # 3. Append the new row to Google Sheets
                     sheet_id = "13A8ckogwxlMYDXKXrW84h0XkWOIbIMUWiePK6uTRzfc"
                     worksheet_name = "pengisian_bbm"
