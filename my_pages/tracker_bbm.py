@@ -182,9 +182,8 @@ def show():
                     filename = item.get("filename")
                     file_id = item.get("file_id")
                     if file_id:
-                        # Use helper to get Drive download link (with file_id)
                         url = get_photo_download_link(file_id)
-                        href = f'<a href="{url}" target="_blank" download="{filename}">⬇️ {filename}</a>'
+                        href = f'<a href="{url}" target="_blank">📷 {filename}</a>'
                         links.append(href)
                 return "<br>".join(links) if links else ""
 
