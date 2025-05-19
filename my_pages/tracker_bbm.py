@@ -225,7 +225,7 @@ def show():
             export_cols = [col for col in display_cols if col != "foto_evidence"]
             excel_buffer = BytesIO()
             with pd.ExcelWriter(excel_buffer, engine="xlsxwriter") as writer:
-                df[export_cols].to_excel(writer, index=False, sheet_name="BBM Data")
+                df[display_cols].to_excel(writer, index=False, sheet_name="BBM Data")
 
             st.download_button(
                 label="📥 Export Data as Excel File",
