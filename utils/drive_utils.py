@@ -1,36 +1,55 @@
 import io
+import base64
+import json
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaIoBaseUpload
 import streamlit as st
-import mimetypes
 
 @st.cache_resource
 def get_drive_service():
-    credentials_info = st.secrets["gdrive_credentials"]
+    # Decode base64 string from Streamlit secrets
+    base64_creds = st.secrets["GOOGLE_DRIVE_CREDS"]
+    json_str = base64.b64decode(base64_creds).decode("utf-8")
+    credentials_info = json.loads(json_str)
+
     credentials = service_account.Credentials.from_service_account_info(
         credentials_info,
         scopes=["https://www.googleapis.com/auth/drive"]
     )
-    return build("drive", "v3", credentials=credentials)
+    service = build("drive", "v3", credentials=credentials)
+    return service
 
-def upload_photo_to_drive(file_data: bytes, file_name: str, folder_id: str = None):
+def upload_photo_to_drive(file_obj, file_name, folder_id):
+    """
+    Upload a photo to Google Drive.
+
+    Args:
+        file_obj: File-like object (bytes) or Streamlit uploaded file
+        file_name: Desired name for the file on Drive
+        folder_id: Drive folder ID where the file should be uploaded
+
+    Returns:
+        Tuple of (file_id, webContentLink)
+    """
     service = get_drive_service()
-    mime_type, _ = mimetypes.guess_type(file_name)
-    if mime_type is None:
-        mime_type = "application/octet-stream"  # fallback
-    
-    media = MediaIoBaseUpload(io.BytesIO(file_data), mimetype=mime_type)
-    file_metadata = {"name": file_name}
-    if folder_id:
-        file_metadata["parents"] = [folder_id]
-    
+
+    # Read bytes from file_obj
+    if hasattr(file_obj, "read"):
+        file_bytes = file_obj.read()
+    else:
+        file_bytes = file_obj
+
+    media = MediaIoBaseUpload(io.BytesIO(file_bytes), mimetype="image/jpeg")
+    file_metadata = {
+        "name": file_name,
+        "parents": [folder_id]
+    }
+
     file = service.files().create(
         body=file_metadata,
         media_body=media,
         fields="id, webContentLink, webViewLink"
     ).execute()
-    return file.get("id"), file.get("webContentLink")
 
-def get_photo_download_link(file_id: str) -> str:
-    return f"https://drive.google.com/uc?export=download&id={file_id}"
+    return file.get("id"), file.get("webContentLink")
