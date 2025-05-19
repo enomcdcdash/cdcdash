@@ -1,54 +1,37 @@
-import json
+# utils/sheets_utils.py
 import base64
-import pandas as pd
-from google.oauth2 import service_account
-from googleapiclient.discovery import build
-from googleapiclient.errors import HttpError
+import json
 import streamlit as st
+import pandas as pd
+import gspread
+from google.oauth2.service_account import Credentials
 
-# ---- Authenticate and Build Sheets API ----
 @st.cache_resource
-def get_sheets_service():
+def get_gspread_client():
+    # Decode base64 string from Streamlit secrets
     base64_creds = st.secrets["GOOGLE_DRIVE_CREDS"]
     json_str = base64.b64decode(base64_creds).decode("utf-8")
     credentials_info = json.loads(json_str)
 
-    credentials = service_account.Credentials.from_service_account_info(
+    credentials = Credentials.from_service_account_info(
         credentials_info,
-        scopes=["https://www.googleapis.com/auth/spreadsheets"]
+        scopes=[
+            "https://www.googleapis.com/auth/spreadsheets",
+            "https://www.googleapis.com/auth/drive"
+        ]
     )
-    return build("sheets", "v4", credentials=credentials)
+    client = gspread.authorize(credentials)
+    return client
 
-# ---- Read data from Sheet and return as DataFrame ----
-def read_sheet(sheet_id: str, sheet_name: str) -> pd.DataFrame:
-    service = get_sheets_service()
-    try:
-        result = (
-            service.spreadsheets()
-            .values()
-            .get(spreadsheetId=sheet_id, range=f"{sheet_name}")
-            .execute()
-        )
-        values = result.get("values", [])
-        if not values:
-            return pd.DataFrame()
-        headers, *rows = values
-        return pd.DataFrame(rows, columns=headers)
-    except HttpError as err:
-        st.error(f"Gagal membaca data dari Google Sheet: {err}")
-        return pd.DataFrame()
+def append_row_to_sheet(sheet_id: str, worksheet_name: str, row_data: list):
+    client = get_gspread_client()
+    sheet = client.open_by_key(sheet_id)
+    worksheet = sheet.worksheet(worksheet_name)
+    worksheet.append_row(row_data, value_input_option="USER_ENTERED")
 
-# ---- Append new data to Sheet ----
-def append_to_sheet(sheet_id: str, sheet_name: str, new_row: dict):
-    service = get_sheets_service()
-    values = [list(new_row.values())]
-    try:
-        service.spreadsheets().values().append(
-            spreadsheetId=sheet_id,
-            range=sheet_name,
-            valueInputOption="USER_ENTERED",
-            insertDataOption="INSERT_ROWS",
-            body={"values": values},
-        ).execute()
-    except HttpError as err:
-        st.error(f"Gagal menambahkan data ke Google Sheet: {err}")
+def read_sheet_as_dataframe(sheet_id: str, worksheet_name: str) -> pd.DataFrame:
+    client = get_gspread_client()
+    sheet = client.open_by_key(sheet_id)
+    worksheet = sheet.worksheet(worksheet_name)
+    data = worksheet.get_all_records()
+    return pd.DataFrame(data)
