@@ -6,6 +6,7 @@ import os
 import base64
 import datetime
 import json
+from zoneinfo import ZoneInfo
 from utils.drive_utils import upload_photo_to_drive, get_photo_download_link
 
 def show():
@@ -74,7 +75,8 @@ def show():
                     uploaded_file_ids = []
                     for i, photo in enumerate(uploaded_photos):
                         photo_ext = photo.name.split(".")[-1]
-                        timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+                        now_gmt7 = datetime.now(ZoneInfo("Asia/Bangkok"))
+                        timestamp = now_gmt7.strftime("%Y-%m-%d_%H-%M-%S")
                         unique_suffix = f"{i+1}"
                         photo_filename = f"{site_id}_{timestamp}_{unique_suffix}.{photo_ext}"
                     
