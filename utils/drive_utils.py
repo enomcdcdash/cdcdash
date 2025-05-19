@@ -1,6 +1,7 @@
 import io
 import base64
 import json
+from typing import Tuple, Union
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaIoBaseUpload
@@ -20,7 +21,11 @@ def get_drive_service():
     service = build("drive", "v3", credentials=credentials)
     return service
 
-def upload_photo_to_drive(file_obj, file_name, folder_id):
+def upload_photo_to_drive(
+    file_obj: Union[io.BytesIO, bytes],
+    file_name: str,
+    folder_id: str
+) -> Tuple[str, str]:
     """
     Upload a photo to Google Drive.
 
@@ -53,3 +58,9 @@ def upload_photo_to_drive(file_obj, file_name, folder_id):
     ).execute()
 
     return file.get("id"), file.get("webContentLink")
+
+def get_photo_download_link(file_id: str) -> str:
+    """
+    Generate a direct download/view link for a Google Drive file ID.
+    """
+    return f"https://drive.google.com/uc?id={file_id}&export=download"
