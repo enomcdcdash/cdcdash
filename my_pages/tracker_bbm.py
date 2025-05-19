@@ -6,7 +6,7 @@ import os
 import base64
 import datetime
 import json
-from zoneinfo import ZoneInfo
+import pytz
 from utils.drive_utils import upload_photo_to_drive, get_photo_download_link
 from utils.sheets_utils import append_row_to_sheet, read_sheet_as_dataframe
 
@@ -77,7 +77,10 @@ def show():
                     uploaded_file_ids = []
                     for i, photo in enumerate(uploaded_photos):
                         photo_ext = photo.name.split(".")[-1]
-                        now_gmt7 = datetime.now(ZoneInfo("Asia/Bangkok"))
+                        # Define timezone GMT+7
+                        tz = pytz.timezone('Asia/Bangkok')  # GMT+7 timezone
+                        # Get current time in GMT+7
+                        now_gmt7 = datetime.datetime.now(tz)
                         timestamp = now_gmt7.strftime("%Y-%m-%d_%H-%M-%S")
                         unique_suffix = f"{i+1}"
                         photo_filename = f"{site_id}_{timestamp}_{unique_suffix}.{photo_ext}"
