@@ -69,20 +69,18 @@ def show():
                     st.warning("❗ Ukuran setiap file harus maksimal 2MB.")
                 else:
                     # 1. Upload photos to Google Drive and collect metadata
+                    folder_id = "1ih1JXOS6-BGfVPBT-vSMSg07XnBPuoME"  # set your Google Drive folder ID here
+
                     uploaded_file_ids = []
                     for i, photo in enumerate(uploaded_photos):
                         photo_ext = photo.name.split(".")[-1]
                         timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
                         unique_suffix = f"{i+1}"
                         photo_filename = f"{site_id}_{timestamp}_{unique_suffix}.{photo_ext}"
-            
-                        file_metadata = {
-                            "name": photo_filename,
-                            # "parents": ["your_drive_folder_id"]  # Optional: replace with your Drive folder ID
-                        }
-                        file_id = upload_photo_to_drive(photo, file_metadata)
-                        uploaded_file_ids.append({"filename": photo_filename, "file_id": file_id})
-            
+                    
+                        file_id, web_link = upload_photo_to_drive(photo, photo_filename, folder_id)
+                        uploaded_file_ids.append({"filename": photo_filename, "file_id": file_id, "web_link": web_link})
+                    
                         st.success(f"✅ Uploaded {photo_filename} to Google Drive")
             
                     # 2. Prepare new data row with photo metadata
