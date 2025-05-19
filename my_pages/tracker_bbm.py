@@ -194,7 +194,10 @@ def show():
                         links.append(href)
                 return "<br>".join(links) if links else ""
     
-            df_latest["foto_evidence"] = df_latest["foto_evidence_drive"].apply(get_photo_links_drive)
+            if "foto_evidence_drive" in df_latest.columns:
+                df_latest["foto_evidence"] = df_latest["foto_evidence_drive"].apply(get_photo_links_drive)
+            else:
+                df_latest["foto_evidence"] = ""
     
             # Columns to display
             display_cols = [
