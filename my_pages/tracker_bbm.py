@@ -310,39 +310,28 @@ def show():
             
             # st.dataframe(df_hist[["area", "regional", "site_id", "site_name", "tanggal_pengisian", "jumlah_pengisian_liter", "foto_evidence_drive"]])
 
-            # Display as styled responsive HTML table
-            st.markdown("### 📸 Tabel Riwayat Pengisian BBM (dengan Foto Evidence)")
-            
-            # Build HTML table
+            # Build full HTML table
             html_table = """
             <style>
-            .responsive-table {
-                width: 100%;
-                overflow-x: auto;
-            }
-            .responsive-table table {
-                width: 100%;
-                border-collapse: collapse;
-                font-size: 14px;
-            }
-            .responsive-table th, .responsive-table td {
-                padding: 8px 12px;
-                border: 1px solid #ddd;
-                text-align: left;
-                vertical-align: top;
-            }
-            .responsive-table th {
-                background-color: #f2f2f2;
-            }
-            .responsive-table a {
-                color: #1f77b4;
-                text-decoration: none;
-            }
-            .responsive-table a:hover {
-                text-decoration: underline;
-            }
+                table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    margin-bottom: 1rem;
+                }
+                th, td {
+                    text-align: left;
+                    padding: 8px;
+                    border: 1px solid #ddd;
+                }
+                tr:nth-child(even) {
+                    background-color: #f9f9f9;
+                }
+                a {
+                    text-decoration: none;
+                    color: #1f77b4;
+                }
             </style>
-            <div class="responsive-table">
+            
             <table>
                 <thead>
                     <tr>
@@ -355,22 +344,19 @@ def show():
                 <tbody>
             """
             
-            # Populate table rows
-            for _, row in df_hist.iterrows():
-                foto_html = row["foto_evidence"] if row["foto_evidence"] else "-"
+            for idx, row in df_hist.iterrows():
                 html_table += f"""
                     <tr>
                         <td>{row['site_id']}</td>
                         <td>{row['tanggal_pengisian']}</td>
                         <td>{row['jumlah_pengisian_liter']}</td>
-                        <td>{foto_html}</td>
+                        <td>{row['foto_evidence'] if row['foto_evidence'] else '-'}</td>
                     </tr>
                 """
             
             html_table += """
                 </tbody>
             </table>
-            </div>
             """
             
             # Render table
