@@ -301,9 +301,25 @@ def show():
 
             # Format jadi hanya tanggal (untuk ditampilkan)
             df_hist["tanggal_pengisian"] = df_hist["tanggal_pengisian"].dt.date
+
+            # Generate foto_evidence links column
+            if "foto_evidence_drive" in df_hist.columns:
+                df_hist["foto_evidence"] = df_hist["foto_evidence_drive"].apply(get_photo_links_drive)
+            else:
+                df_hist["foto_evidence"] = ""
             
-            # Your code for tab3 visualization goes here...
-            st.dataframe(df_hist[["area", "regional", "site_id", "site_name", "tanggal_pengisian", "jumlah_pengisian_liter", "foto_evidence_drive"]])
+            # st.dataframe(df_hist[["area", "regional", "site_id", "site_name", "tanggal_pengisian", "jumlah_pengisian_liter", "foto_evidence_drive"]])
+
+            # Display as Markdown for clickable links
+            st.markdown("### 📸 Tabel Riwayat Pengisian BBM (dengan Foto Evidence)")
+            for idx, row in df_hist.iterrows():
+                st.markdown(f"""
+                    **Site ID**: {row['site_id']}  
+                    **Tanggal**: {row['tanggal_pengisian']}  
+                    **Jumlah Pengisian (L)**: {row['jumlah_pengisian_liter']}  
+                    **Foto Evidence**: {row['foto_evidence'] if row['foto_evidence'] else '-'}  
+                    ---  
+                """, unsafe_allow_html=True)
             
             # Create an Excel file from the DataFrame
             excel_buffer = BytesIO()
