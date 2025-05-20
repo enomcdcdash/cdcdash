@@ -310,16 +310,71 @@ def show():
             
             # st.dataframe(df_hist[["area", "regional", "site_id", "site_name", "tanggal_pengisian", "jumlah_pengisian_liter", "foto_evidence_drive"]])
 
-            # Display as Markdown for clickable links
+            # Display as styled responsive HTML table
             st.markdown("### 📸 Tabel Riwayat Pengisian BBM (dengan Foto Evidence)")
-            for idx, row in df_hist.iterrows():
-                st.markdown(f"""
-                    **Site ID**: {row['site_id']}  
-                    **Tanggal**: {row['tanggal_pengisian']}  
-                    **Jumlah Pengisian (L)**: {row['jumlah_pengisian_liter']}  
-                    **Foto Evidence**: {row['foto_evidence'] if row['foto_evidence'] else '-'}  
-                    ---  
-                """, unsafe_allow_html=True)
+            
+            # Build HTML table
+            html_table = """
+            <style>
+            .responsive-table {
+                width: 100%;
+                overflow-x: auto;
+            }
+            .responsive-table table {
+                width: 100%;
+                border-collapse: collapse;
+                font-size: 14px;
+            }
+            .responsive-table th, .responsive-table td {
+                padding: 8px 12px;
+                border: 1px solid #ddd;
+                text-align: left;
+                vertical-align: top;
+            }
+            .responsive-table th {
+                background-color: #f2f2f2;
+            }
+            .responsive-table a {
+                color: #1f77b4;
+                text-decoration: none;
+            }
+            .responsive-table a:hover {
+                text-decoration: underline;
+            }
+            </style>
+            <div class="responsive-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Site ID</th>
+                        <th>Tanggal</th>
+                        <th>Jumlah Pengisian (L)</th>
+                        <th>Foto Evidence</th>
+                    </tr>
+                </thead>
+                <tbody>
+            """
+            
+            # Populate table rows
+            for _, row in df_hist.iterrows():
+                foto_html = row["foto_evidence"] if row["foto_evidence"] else "-"
+                html_table += f"""
+                    <tr>
+                        <td>{row['site_id']}</td>
+                        <td>{row['tanggal_pengisian']}</td>
+                        <td>{row['jumlah_pengisian_liter']}</td>
+                        <td>{foto_html}</td>
+                    </tr>
+                """
+            
+            html_table += """
+                </tbody>
+            </table>
+            </div>
+            """
+            
+            # Render table
+            st.markdown(html_table, unsafe_allow_html=True)
             
             # Create an Excel file from the DataFrame
             excel_buffer = BytesIO()
