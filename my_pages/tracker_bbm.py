@@ -109,6 +109,27 @@ def show():
                     st.cache_data.clear()
                     st.rerun()
 
+    # Define helper to create Google Drive viewable URL
+    def get_photo_download_link(file_id):
+        return f"https://drive.google.com/file/d/{file_id}/view?usp=sharing"
+            
+    # Function to convert photo metadata JSON to clickable links
+    def get_photo_links_drive(foto_evidence_drive_json):
+        try:
+            foto_list = json.loads(foto_evidence_drive_json)
+        except Exception:
+            return ""
+                
+        links = []
+        for item in foto_list:
+            filename = item.get("filename")
+            file_id = item.get("file_id")
+            if file_id:
+                url = get_photo_download_link(file_id)
+                href = f'<a href="{url}" target="_blank">📷 {filename}</a>'
+                links.append(href)
+        return "<br>".join(links) if links else ""
+
     # Tab 2: Dashboard Status BBM
     with tab2:
         st.header("📊 Tracker Pengisian BBM")
@@ -178,27 +199,6 @@ def show():
             df_latest["status_bbm"] = df_latest.apply(warnacol, axis=1)
             df_latest["tanggal_pengisian"] = df_latest["tanggal_pengisian"].dt.date
             df_latest["tanggal_habis"] = df_latest["tanggal_habis"].dt.date
-
-            # Define helper to create Google Drive viewable URL
-            def get_photo_download_link(file_id):
-                return f"https://drive.google.com/file/d/{file_id}/view?usp=sharing"
-            
-            # Function to convert photo metadata JSON to clickable links
-            def get_photo_links_drive(foto_evidence_drive_json):
-                try:
-                    foto_list = json.loads(foto_evidence_drive_json)
-                except Exception:
-                    return ""
-                
-                links = []
-                for item in foto_list:
-                    filename = item.get("filename")
-                    file_id = item.get("file_id")
-                    if file_id:
-                        url = get_photo_download_link(file_id)
-                        href = f'<a href="{url}" target="_blank">📷 {filename}</a>'
-                        links.append(href)
-                return "<br>".join(links) if links else ""
             
             # Ensure 'foto_evidence_drive' column exists
             if "foto_evidence_drive" not in df_latest.columns:
