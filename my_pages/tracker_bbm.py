@@ -347,19 +347,20 @@ def show():
                 <tbody>
             """
             
+            # Append rows without leading tabs/spaces
             for _, row in df_hist.iterrows():
-                html_table += f"""
-                    <tr>
-                        <td>{row['site_id']}</td>
-                        <td>{row['tanggal_pengisian']}</td>
-                        <td>{row['jumlah_pengisian_liter']}</td>
-                        <td>{row['foto_evidence']}</td>
-                    </tr>
+                foto = row["foto_evidence"] if row["foto_evidence"] else "-"
+                html_table += f"""<tr>
+                    <td>{row['site_id']}</td>
+                    <td>{row['tanggal_pengisian']}</td>
+                    <td>{row['jumlah_pengisian_liter']}</td>
+                    <td>{foto}</td>
+                </tr>
                 """
             
             html_table += "</tbody></table>"
             
-            # Display the table using markdown with HTML rendering enabled
+            # Render in Streamlit
             st.markdown(html_table, unsafe_allow_html=True)
             
             # Create an Excel file from the DataFrame
