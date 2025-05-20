@@ -310,28 +310,29 @@ def show():
             
             # st.dataframe(df_hist[["area", "regional", "site_id", "site_name", "tanggal_pengisian", "jumlah_pengisian_liter", "foto_evidence_drive"]])
 
-            # Build full HTML table
+            # Build the HTML table
             html_table = """
             <style>
                 table {
                     width: 100%;
                     border-collapse: collapse;
-                    margin-bottom: 1rem;
+                    font-family: sans-serif;
                 }
                 th, td {
                     text-align: left;
                     padding: 8px;
                     border: 1px solid #ddd;
+                    vertical-align: top;
                 }
                 tr:nth-child(even) {
                     background-color: #f9f9f9;
                 }
                 a {
-                    text-decoration: none;
                     color: #1f77b4;
+                    text-decoration: none;
                 }
             </style>
-            
+            <h4>📸 Tabel Riwayat Pengisian BBM (dengan Foto Evidence)</h4>
             <table>
                 <thead>
                     <tr>
@@ -344,22 +345,19 @@ def show():
                 <tbody>
             """
             
-            for idx, row in df_hist.iterrows():
+            for _, row in df_hist.iterrows():
                 html_table += f"""
                     <tr>
                         <td>{row['site_id']}</td>
                         <td>{row['tanggal_pengisian']}</td>
                         <td>{row['jumlah_pengisian_liter']}</td>
-                        <td>{row['foto_evidence'] if row['foto_evidence'] else '-'}</td>
+                        <td>{row['foto_evidence']}</td>
                     </tr>
                 """
             
-            html_table += """
-                </tbody>
-            </table>
-            """
+            html_table += "</tbody></table>"
             
-            # Render table
+            # Display the table using markdown with HTML rendering enabled
             st.markdown(html_table, unsafe_allow_html=True)
             
             # Create an Excel file from the DataFrame
