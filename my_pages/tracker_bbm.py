@@ -116,20 +116,22 @@ def show():
     # Function to convert photo metadata JSON to clickable links
     def get_photo_links_drive(foto_evidence_drive_json):
         try:
+            if pd.isna(foto_evidence_drive_json):
+                return "-"
             foto_list = json.loads(foto_evidence_drive_json)
         except Exception:
-            return ""
-                
+            return "-"
+    
         links = []
         for item in foto_list:
-            filename = item.get("filename")
+            filename = item.get("filename", "photo")
             file_id = item.get("file_id")
             if file_id:
                 url = get_photo_download_link(file_id)
                 href = f'<a href="{url}" target="_blank">📷 {filename}</a>'
                 links.append(href)
-        return "<br>".join(links) if links else ""
-
+    
+        return "<br>".join(links) if links else "-"
     # Tab 2: Dashboard Status BBM
     with tab2:
         st.header("📊 Tracker Pengisian BBM")
